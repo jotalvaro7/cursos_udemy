@@ -1,0 +1,32 @@
+<button (click)="setVisible()">
+    {{ visible ? "Hide" : "Show" }}
+</button>
+
+@if (visible) {
+    <h2> {{ title }} </h2>
+
+    <div> Total counter: {{counter}} </div>
+
+    @if (users.length>0 && users!=undefined) {
+    <table>
+        <thead>
+            <th>Id</th>
+            <th>Name</th>
+        </thead>
+        <tbody>
+            @for (user of users; track $index) {
+                <tr>
+                    <td>{{ $index+1 }}</td>
+                    <td>{{ user }}</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    } @else {
+        <p> don't exist users in the system </p>
+    }
+} @else {
+    <h2> Sorry, the page is not available!</h2>
+}
+
+<app-counter [title]="subTitle" (counterEmitter)="setCounter($event)"></app-counter>

@@ -1,0 +1,21 @@
+<h3> Invoice Details</h3>
+@if (items.length > 0) {
+<table class="table table-striped table-bordered table-hover table-sm">
+    <thead class="table-dark">
+        <tr class="text-center">
+            <th>id</th>
+            <th>product</th>
+            <th>price</th>
+            <th>quantity</th>
+            <th>remove</th>
+        </tr>
+    </thead>
+    <tbody>
+        @for (item of items; track $index) {
+            <tr class="text-center" row-item [item] = "item" (removeItemEvent)="onRemove($event)" ></tr>
+        }
+    </tbody>
+</table>
+} @else {
+<p class="alert alert-warning"> No items found!!</p>
+}

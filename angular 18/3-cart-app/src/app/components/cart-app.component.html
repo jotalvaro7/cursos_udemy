@@ -1,0 +1,18 @@
+<navbar [items]="items" (showCartEventEmitter)="toggleCart()"></navbar>
+<div class="container my-4">
+    <h2 class="my-3 font-weight-bold">Products Catalog!</h2>
+    <div class="row">
+        <div [className]="showCart ? 'col-9' : 'col-12'">
+            <app-catalog [products]="products" (addToCartEmitter)="onAddToCart($event)" />
+        </div>
+        @if (showCart) {
+        <div class="col-3">
+            @if (items.length > 0) {
+            <cart [items]="items" [total]="total" (idProductEventEmitter)="onDeleteCart($event)" />
+            }@else {
+            <p class="alert alert-warning text-center">No items in cart!</p>
+            }
+        </div>
+        }
+    </div>
+</div>

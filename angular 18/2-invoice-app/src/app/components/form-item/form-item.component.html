@@ -1,0 +1,43 @@
+<h2>Add Item</h2>
+<form class="w-50" [formGroup]="itemForm" (ngSubmit)="addItem()">
+    <input class="form-control my-3" placeholder="product" formControlName="product">
+
+    <div>
+        @if (itemForm.get('product')!.invalid && (itemForm.get('product')!.touched || itemForm.get('product')!.dirty)){
+            @if (itemForm.get('product')!.hasError('required')){
+            <div class="text-danger"> The product is required</div>
+            }
+            @if (itemForm.get('product')!.hasError('minlength')) {
+            <div class="text-danger"> The product must be at least 5 characters</div>
+            }
+        }
+    </div>
+
+    <input class="form-control my-3" placeholder="price" formControlName="price">
+
+    <div>
+        @if (itemForm.get('price')!.invalid && (itemForm.get('price')!.touched || itemForm.get('price')!.dirty)){
+            @if (itemForm.get('price')!.hasError('required')){
+            <div class="text-danger">price is required</div>
+            }
+            @if (itemForm.get('price')!.hasError('min')) {
+            <div class="text-danger">price must be at least 10</div>
+            }
+        }
+    </div>
+
+    <input class="form-control my-3" placeholder="quantity" formControlName="quantity">
+
+    <div>
+        @if (itemForm.get('quantity')!.invalid && (itemForm.get('quantity')!.touched || itemForm.get('quantity')!.dirty)){
+            @if (itemForm.get('quantity')!.hasError('required')){
+            <div class="text-danger">quantity is required</div>
+            }
+            @if (itemForm.get('quantity')!.hasError('min')) {
+            <div class="text-danger">quantity must be at least 1</div>
+            }
+        }
+    </div>
+
+    <button type="submit" class="btn btn-primary my-3" [disabled]="itemForm.invalid">Add Item</button>
+</form>

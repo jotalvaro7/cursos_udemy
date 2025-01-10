@@ -1,0 +1,10 @@
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title text-center mark fs-6">{{ product.name }}</h5>
+        <p class="card-text">{{product.description}}</p>
+        <p class="card-text fw-bold">{{product.price | currency}}</p>
+        <button (click)="onAddToCart(product)" class="btn btn-primary">
+            <i class="bi bi-cart"></i>
+        </button>
+    </div>
+</div>
