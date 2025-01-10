@@ -3,7 +3,7 @@ import { ProductCardComponent } from '../product-card/product-card.component';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 @Component({
-  selector: 'app-catalog',
+  selector: 'catalog',
   standalone: true,
   imports: [ProductCardComponent],
   templateUrl: './catalog.component.html'

@@ -1,19 +1,22 @@
 import { Product } from '../models/product';
 import { CatalogComponent } from './catalog/catalog.component';
 import { ProductService } from './../services/product.service';
-import { Component, inject, OnInit } from '@angular/core';
-import { CartComponent } from './cart/cart.component';
+import { Component, EventEmitter, inject, OnInit, Output } from '@angular/core';
 import { CartItem } from '../data/card';
 import { NavbarComponent } from './navbar/navbar.component';
+import { ModalCartComponent } from './modal-cart/modal-cart.component';
 
 @Component({
   selector: 'cart-app',
   standalone: true,
-  imports: [CatalogComponent, CartComponent, NavbarComponent],
+  imports: [CatalogComponent, ModalCartComponent, NavbarComponent],
   templateUrl: './cart-app.component.html',
 })
 export class CartAppComponent implements OnInit {
   private ProductService = inject(ProductService);
+
+  @Output() showCartEventEmitter = new EventEmitter<boolean>();
+
   products: Product[] = [];
   items: CartItem[] = [];
   total: number = 0;
@@ -29,9 +32,7 @@ export class CartAppComponent implements OnInit {
     const item = this.items.find((item) => item.product.id === product.id);
     if (item) {
       this.items = this.items.map((item) =>
-        item.product.id === product.id
-          ? { ...item, quantity: item.quantity + 1 }
-          : item
+        item.product.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
       );
     } else {
       this.items = [...this.items, { product: { ...product }, quantity: 1 }];
