@@ -1,7 +1,7 @@
 import { Product } from '../models/product';
 import { CatalogComponent } from './catalog/catalog.component';
 import { ProductService } from './../services/product.service';
-import { Component, EventEmitter, inject, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, inject, OnInit, output, Output } from '@angular/core';
 import { CartItem } from '../data/card';
 import { NavbarComponent } from './navbar/navbar.component';
 import { ModalCartComponent } from './modal-cart/modal-cart.component';
@@ -14,8 +14,6 @@ import { ModalCartComponent } from './modal-cart/modal-cart.component';
 })
 export class CartAppComponent implements OnInit {
   private ProductService = inject(ProductService);
-
-  @Output() showCartEventEmitter = new EventEmitter<boolean>();
 
   products: Product[] = [];
   items: CartItem[] = [];
