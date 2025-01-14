@@ -1,11 +1,10 @@
-<navbar [items]="items" (showCartEventEmitter)="toggleCart()"></navbar>
+<navbar [items]="items()" (showCartEventEmitter)="toggleCart()"></navbar>
 <div class="container my-4">
     <h2 class="my-3 font-weight-bold">Products Catalog!</h2>
-    <catalog [products]="products" (addToCartEmitter)="onAddToCart($event)" />
-    @if (showCart) {
+    <catalog [products]="products()" (addToCartEmitter)="onAddToCart($event)" />
+    @if (showCart()) {
         <modal-cart 
-        [items]="items" 
-        [total]="total" 
+        [items]="items()" 
         (idProductEventEmitter)="onDeleteCart($event)" 
         (closeCartEventEmitter)="toggleCart()"/>
     }

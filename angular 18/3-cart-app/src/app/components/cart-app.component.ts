@@ -1,7 +1,7 @@
 import { Product } from '../models/product';
 import { CatalogComponent } from './catalog/catalog.component';
 import { ProductService } from './../services/product.service';
-import { Component, EventEmitter, inject, OnInit, output, Output } from '@angular/core';
+import { Component, inject, OnInit, signal} from '@angular/core';
 import { CartItem } from '../data/card';
 import { NavbarComponent } from './navbar/navbar.component';
 import { ModalCartComponent } from './modal-cart/modal-cart.component';
@@ -15,45 +15,37 @@ import { ModalCartComponent } from './modal-cart/modal-cart.component';
 export class CartAppComponent implements OnInit {
   private ProductService = inject(ProductService);
 
-  products: Product[] = [];
-  items: CartItem[] = [];
-  total: number = 0;
-  showCart: boolean = false;
+  products = signal<Product[]>([]);
+  items = signal<CartItem[]>([]);
+  showCart = signal<boolean>(false);
 
   ngOnInit(): void {
-    this.products = this.ProductService.findAll();
-    this.items = JSON.parse(sessionStorage.getItem('cart') || '[]')
-    this.calculateTotal();
+    this.products.set(this.ProductService.findAll());
+    this.items.set(JSON.parse(sessionStorage.getItem('cart') || '[]'));
   }
 
   onAddToCart(product: Product): void {
-    const item = this.items.find((item) => item.product.id === product.id);
+    const currentItems = this.items();
+    const item = currentItems.find((item) => item.product.id === product.id);
     if (item) {
-      this.items = this.items.map((item) =>
-        item.product.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
-      );
+      this.items.set(currentItems.map((item) => item.product.id === product.id ? { ...item, quantity: item.quantity + 1 } : item));
     } else {
-      this.items = [...this.items, { product: { ...product }, quantity: 1 }];
+      this.items.set([...currentItems, { product: { ...product }, quantity: 1 }]);
     }
-    this.calculateTotal();
-    this.saveSession();
   }
 
   onDeleteCart(id: number): void {
-    this.items = this.items.filter((item) => item.product.id !== id);
-    this.calculateTotal();
-    this.saveSession();
-  }
+    const currentItems = this.items();
+    const updatedItems = currentItems.filter((item) => item.product.id !== id);
+    this.items.set(updatedItems);
 
-  calculateTotal(): void {
-    this.total = this.items.reduce((acc, item) => acc + item.product.price * item.quantity, 0);
-  }
-
-  saveSession(): void {
-    sessionStorage.setItem('cart', JSON.stringify(this.items));
+    if(this.items().length == 0){
+      sessionStorage.removeItem('cart');
+      sessionStorage.clear();
+    }
   }
 
   toggleCart(): void {
-    this.showCart = !this.showCart;
+    this.showCart.set(!this.showCart());
   }
 }

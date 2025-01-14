@@ -11,8 +11,6 @@ import { CartItem } from '../../data/card';
 export class ModalCartComponent {
 
   @Input() items: CartItem[] = [];
-  @Input() total: number = 0;
-
 
   @Output() closeCartEventEmitter = new EventEmitter<boolean>();
   @Output() idProductEventEmitter = new EventEmitter<number>();

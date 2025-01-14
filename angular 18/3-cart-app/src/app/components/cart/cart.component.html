@@ -9,7 +9,7 @@
         </tr>
     </thead>
     <tbody>
-        @for (item of items; track $index) {
+        @for (item of items(); track $index) {
             <tr class="align-middle text-center">
                 <td>{{item.product.name}}</td>
                 <td>{{item.quantity}}</td>
@@ -26,7 +26,7 @@
     <tfoot>
         <tr>
             <td colspan="4" class="text-end fw-bold">Total</td>
-            <td colspan="1" class="text-start fw-bold"> {{ total | currency}} </td>
+            <td colspan="1" class="text-start fw-bold"> {{ total() | currency}} </td>
         </tr>
     </tfoot>
 </table>
