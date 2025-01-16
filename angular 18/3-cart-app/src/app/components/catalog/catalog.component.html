@@ -1,5 +1,12 @@
+<h4 class="my-3 font-weight-bold">Products Catalog!</h4>
+
 <div class="row">
-    @for (product of products; track $index) {
-        <div product-card [product]="product" class="col-4 my-2" (addToCartEmitter)="onAddToCart($event)"></div>
-    }
+  @for (product of products; track $index) {
+  <div
+    product-card
+    [product]="product"
+    class="col-4 my-2"
+    (addToCartEmitter)="onAddToCart($event)"
+  ></div>
+  }
 </div>

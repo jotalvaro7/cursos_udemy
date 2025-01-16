@@ -1,51 +1,81 @@
 import { Product } from '../models/product';
-import { CatalogComponent } from './catalog/catalog.component';
-import { ProductService } from './../services/product.service';
-import { Component, inject, OnInit, signal} from '@angular/core';
+import { Component, effect, inject, OnInit, signal } from '@angular/core';
 import { CartItem } from '../data/card';
 import { NavbarComponent } from './navbar/navbar.component';
-import { ModalCartComponent } from './modal-cart/modal-cart.component';
+import { Router, RouterOutlet } from '@angular/router';
+import { SharingDataService } from '../services/sharing-data.service';
 
 @Component({
   selector: 'cart-app',
   standalone: true,
-  imports: [CatalogComponent, ModalCartComponent, NavbarComponent],
+  imports: [NavbarComponent, RouterOutlet],
   templateUrl: './cart-app.component.html',
 })
 export class CartAppComponent implements OnInit {
-  private ProductService = inject(ProductService);
-
-  products = signal<Product[]>([]);
   items = signal<CartItem[]>([]);
-  showCart = signal<boolean>(false);
+
+  private sharingDataService = inject(SharingDataService);
+  private router = inject(Router);
 
   ngOnInit(): void {
-    this.products.set(this.ProductService.findAll());
     this.items.set(JSON.parse(sessionStorage.getItem('cart') || '[]'));
+    this.onDeleteCart();
+    this.onAddToCart();
   }
 
-  onAddToCart(product: Product): void {
-    const currentItems = this.items();
-    const item = currentItems.find((item) => item.product.id === product.id);
-    if (item) {
-      this.items.set(currentItems.map((item) => item.product.id === product.id ? { ...item, quantity: item.quantity + 1 } : item));
-    } else {
-      this.items.set([...currentItems, { product: { ...product }, quantity: 1 }]);
-    }
+  onAddToCart(): void {
+    this.sharingDataService.addToCart$.subscribe((product: Product | null) => {
+      if (product) {
+        const currentItems = this.items();
+        const item = currentItems.find(
+          (item) => item.product.id === product.id
+        );
+        if (item) {
+          this.items.set(
+            currentItems.map((item) =>
+              item.product.id === product.id
+                ? { ...item, quantity: item.quantity + 1 }
+                : item
+            )
+          );
+        } else {
+          this.items.set([
+            ...currentItems,
+            { product: { ...product }, quantity: 1 },
+          ]);
+        }
+        this.router.navigate(['/cart'], {
+          state: {
+            items: this.items(),
+          },
+        });
+      }
+    });
   }
 
-  onDeleteCart(id: number): void {
-    const currentItems = this.items();
-    const updatedItems = currentItems.filter((item) => item.product.id !== id);
-    this.items.set(updatedItems);
+  onDeleteCart(): void {
+    this.sharingDataService.id$.subscribe((id: number) => {
+      const currentItems = this.items();
+      const updatedItems = currentItems.filter(
+        (item) => item.product.id !== id
+      );
+      this.items.set(updatedItems);
+      if (this.items().length == 0) {
+        sessionStorage.removeItem('cart');
+        sessionStorage.clear();
+      }
 
-    if(this.items().length == 0){
-      sessionStorage.removeItem('cart');
-      sessionStorage.clear();
-    }
+      this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+        this.router.navigate(['/cart'], {
+          state: {
+            items: this.items(),
+          },
+        });
+      });
+    });
   }
 
-  toggleCart(): void {
-    this.showCart.set(!this.showCart());
-  }
+  private _save = effect(() => {
+    sessionStorage.setItem('cart', JSON.stringify(this.items()));
+  });
 }

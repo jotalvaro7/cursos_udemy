@@ -1,12 +1,8 @@
-import {
-  Component,
-  computed,
-  effect,
-  input,
-  output,
-} from '@angular/core';
+import { SharingDataService } from './../../services/sharing-data.service';
+import { Component, computed, inject, signal } from '@angular/core';
 import { CartItem } from '../../data/card';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'cart',
@@ -15,48 +11,23 @@ import { CommonModule } from '@angular/common';
   templateUrl: './cart.component.html',
 })
 export class CartComponent {
-  /**
-   * Code using signals
-   */
-  items = input.required<CartItem[]>();
-  idProductEventEmitter = output<number>();
+  items = signal<CartItem[]>([]);
+  private sharingDataService = inject(SharingDataService);
 
-  onDeleteCart(id: number): void {
-    this.idProductEventEmitter.emit(id);
+  constructor(private router: Router) {
+    this.items.set(
+      this.router.getCurrentNavigation()?.extras.state?.['items'] || []
+    );
   }
 
   total = computed(() =>
-    this.items().reduce((acc, item) => acc + item.product.price * item.quantity, 0)
+    this.items().reduce(
+      (acc, item) => acc + item.product.price * item.quantity,
+      0
+    )
   );
 
-  private _save = effect(() => {
-    sessionStorage.setItem('cart', JSON.stringify(this.items()));
-  });
-
+  onDeleteCart(id: number): void {
+    this.sharingDataService.setId(id);
+  }
 }
-
-/**
- ** Code using onChanges (old code)
- * 
- ** export class CartComponent implements OnChanges {
- ** @Input() items: CartItem[] = [];
- ** @Output() idProductEventEmitter = new EventEmitter<number>();
- ** total = 0;
-  
- ** ngOnChanges(changes: SimpleChanges): void {
- **   this.calculateTotal();
- **   this.saveSession();
- ** }
-
- ** onDeleteCart(id: number): void {
- **   this.idProductEventEmitter.emit(id);
- ** }
-
- ** calculateTotal(): void {
- **   this.total = this.items.reduce((acc, item) => acc + item.product.price * item.quantity, 0);
- ** }
-
- ** saveSession(): void {
- **   sessionStorage.setItem('cart', JSON.stringify(this.items));
- ** }
-*/
