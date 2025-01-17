@@ -1,6 +1,6 @@
 import { SharingDataService } from './../../services/sharing-data.service';
 import { Component, computed, inject, signal } from '@angular/core';
-import { CartItem } from '../../data/card';
+import { CartItem } from '../../data/cart';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 
@@ -15,17 +15,10 @@ export class CartComponent {
   private sharingDataService = inject(SharingDataService);
 
   constructor(private router: Router) {
-    this.items.set(
-      this.router.getCurrentNavigation()?.extras.state?.['items'] || []
-    );
+    this.items.set(this.router.getCurrentNavigation()?.extras.state?.['items'] || []);
   }
 
-  total = computed(() =>
-    this.items().reduce(
-      (acc, item) => acc + item.product.price * item.quantity,
-      0
-    )
-  );
+  total = computed(() => this.items().reduce((acc, item) => acc + item.product.price * item.quantity, 0));
 
   onDeleteCart(id: number): void {
     this.sharingDataService.setId(id);
