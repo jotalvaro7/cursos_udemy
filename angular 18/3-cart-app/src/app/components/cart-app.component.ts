@@ -1,6 +1,6 @@
 import { Product } from '../models/product';
 import { Component, effect, inject, OnInit, signal } from '@angular/core';
-import { CartItem } from '../data/cart';
+import { CartItem } from '../models/cart';
 import { NavbarComponent } from './navbar/navbar.component';
 import { Router, RouterOutlet } from '@angular/router';
 import { SharingDataService } from '../services/sharing-data.service';

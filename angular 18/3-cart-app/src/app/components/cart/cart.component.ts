@@ -1,6 +1,6 @@
 import { SharingDataService } from './../../services/sharing-data.service';
 import { Component, computed, inject, signal } from '@angular/core';
-import { CartItem } from '../../data/cart';
+import { CartItem } from '../../models/cart';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 

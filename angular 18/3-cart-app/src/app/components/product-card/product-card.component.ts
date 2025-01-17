@@ -10,7 +10,7 @@ import { CommonModule } from '@angular/common';
 })
 export class ProductCardComponent {
 
-  @Input() product: Product = new Product();
+  @Input() product: Product = { id: 0, name: '', description: '', price: 0 };
   @Output() addToCartEmitter = new EventEmitter<Product>();
 
   onAddToCart(product: Product) {
