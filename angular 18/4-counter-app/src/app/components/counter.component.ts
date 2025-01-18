@@ -22,7 +22,7 @@ export class CounterComponent {
 
 
   increment(): void {
-    this.store.dispatch(increment());
+    this.store.dispatch(increment({ value: 5 }));
   }
 
   decrement(): void {
