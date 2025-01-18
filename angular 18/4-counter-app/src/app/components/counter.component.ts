@@ -1,4 +1,6 @@
-import { Component, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
+import { Store } from '@ngrx/store';
+import { decrement, increment, reset } from '../store/items.action';
 
 @Component({
   selector: 'app-counter',
@@ -8,23 +10,27 @@ import { Component, signal } from '@angular/core';
 })
 export class CounterComponent {
 
+  private store = inject(Store<{ counter: number }>);
+
   title = signal('Counter using redux!');
   counter = signal(0);
 
+  constructor() {
+    this.store.select('counter').subscribe(count =>
+      this.counter.set(count));
+  }
+
 
   increment(): void {
-    this.counter.set(this.counter() + 1);
-    this.title.set('Ohh the counter is incremented!');
+    this.store.dispatch(increment());
   }
 
   decrement(): void {
-    this.counter.set(this.counter() - 1);
-    this.title.set('Ohh the counter is decremented!');
+    this.store.dispatch(decrement());
   }
 
   reset(): void {
-    this.counter.set(0);
-    this.title.set('Counter is reset!');
+    this.store.dispatch(reset());
   }
 
 }
