@@ -1,9 +1,8 @@
 import { Routes } from '@angular/router';
-import { CatalogComponent } from './components/catalog/catalog.component';
-import { CartComponent } from './components/cart/cart.component';
 
 export const routes: Routes = [
-  { path: 'catalog', component: CatalogComponent },
-  { path: 'cart', component: CartComponent },
+  { path: 'catalog', loadComponent: () => import('./components/catalog/catalog.component').then(c => c.CatalogComponent) },
+  { path: 'cart', loadComponent: () => import('./components/cart/cart.component').then(c => c.CartComponent) },
   { path: '', redirectTo: '/catalog', pathMatch: 'full' },
 ];
+
