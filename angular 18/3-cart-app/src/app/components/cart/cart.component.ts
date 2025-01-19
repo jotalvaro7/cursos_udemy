@@ -1,8 +1,10 @@
 import { SharingDataService } from './../../services/sharing-data.service';
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { CartItem } from '../../models/cart';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { Store } from '@ngrx/store';
+import { ItemsState } from '../../store/items.reducer';
+import { total } from '../../store/items.actions';
 
 @Component({
   selector: 'cart',
@@ -10,15 +12,22 @@ import { Router } from '@angular/router';
   imports: [CommonModule],
   templateUrl: './cart.component.html',
 })
-export class CartComponent {
-  items = signal<CartItem[]>([]);
+export class CartComponent implements OnInit {
   private sharingDataService = inject(SharingDataService);
+  private store = inject(Store<{ items: ItemsState }>);
 
-  constructor(private router: Router) {
-    this.items.set(this.router.getCurrentNavigation()?.extras.state?.['items'] || []);
+  items = signal<CartItem[]>([]);
+  total = signal<number>(0);
+
+  constructor() {
+    this.store.select('items').subscribe((state) => {
+      this.items.set(state.items);
+      this.total.set(state.total);
+    });
   }
-
-  total = computed(() => this.items().reduce((acc, item) => acc + item.product.price * item.quantity, 0));
+  ngOnInit(): void {
+    this.store.dispatch(total());
+  }
 
   onDeleteCart(id: number): void {
     this.sharingDataService.setId(id);

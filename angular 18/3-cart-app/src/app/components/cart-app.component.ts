@@ -6,6 +6,9 @@ import { Router, RouterOutlet } from '@angular/router';
 import { SharingDataService } from '../services/sharing-data.service';
 import Swal from 'sweetalert2';
 import { SweetAlertIcon } from 'sweetalert2';
+import { Store } from '@ngrx/store';
+import { ItemsState } from '../store/items.reducer';
+import { addItem, removeItem } from '../store/items.actions';
 
 @Component({
   selector: 'cart-app',
@@ -18,21 +21,19 @@ export class CartAppComponent implements OnInit {
 
   private sharingDataService = inject(SharingDataService);
   private router = inject(Router);
+  private store = inject(Store<{ items: ItemsState }>);
 
   ngOnInit(): void {
-    this.items.set(JSON.parse(sessionStorage.getItem('cart') || '[]'));
+    this.store.select('items').subscribe((state) => {
+      this.items.set(state.items);
+    });
     this.onDeleteCart();
     this.onAddCart();
   }
 
   onAddCart(): void {
     this.sharingDataService.addToCart$.subscribe((product: Product) => {
-      const hasItem = this.findItemInCart(product.id);
-      if (hasItem) {
-        this.increaseQuantityForItem(product);
-      } else {
-        this.addNewItem(product);
-      }
+      this.store.dispatch(addItem({ product }));
       this.swalAlertSuccessNotification('Shopping Cart', 'Product added to cart!!', 'success');
     });
   }
@@ -49,9 +50,7 @@ export class CartAppComponent implements OnInit {
         confirmButtonText: 'Yes, delete it!',
       }).then((result) => {
         if (result.isConfirmed) {
-          const updatedItems = this.removeItemFromCart(id);
-          this.items.set(updatedItems);
-          this.handleEmptyCart();
+          this.store.dispatch(removeItem({ id }));
           this.navigateToCart();
           this.swalAlertSuccessNotification('Deleted!', 'The item has been deleted.', 'success');
         }
@@ -59,37 +58,8 @@ export class CartAppComponent implements OnInit {
     });
   }
 
-  private findItemInCart(id: number): CartItem | undefined {
-    return this.items().find((item) => item.product.id === id);
-  }
-
-  private increaseQuantityForItem(product: Product): void {
-    this.items.update((items) => items.map((item) => item.product.id === product.id ? { ...item, quantity: item.quantity + 1 } : item));
-  }
-
-  private addNewItem(product: Product): void {
-    this.items.set([...this.items(), { product: { ...product }, quantity: 1 }]);
-  }
-
-  private removeItemFromCart(id: number): CartItem[] {
-    return this.items().filter((item) => item.product.id !== id);
-  }
-
-  private handleEmptyCart(): void {
-    if (this.items().length == 0) {
-      sessionStorage.removeItem('cart');
-      sessionStorage.clear();
-    }
-  }
-
   private navigateToCart(): void {
-    this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
-      this.router.navigate(['/cart'], {
-        state: {
-          items: this.items(),
-        },
-      });
-    });
+    this.router.navigate(['/cart']);
   }
 
   private swalAlertSuccessNotification(title: string, text: string, icon: string): void {
