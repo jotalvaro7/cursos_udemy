@@ -1,5 +1,5 @@
 import { createReducer, on } from "@ngrx/store"
-import { loadProducts } from "./products.actions"
+import { findAll, loadProducts } from "./products.actions"
 import { Product } from "../models/product"
 
 export interface ProductsState {
@@ -12,5 +12,6 @@ const initialState: ProductsState = {
 
 export const productsReducer = createReducer(
     initialState,
-    on(loadProducts, (state, { products }) => ({ ...state, products })),
+    on(loadProducts, (state) => ({ products: [...state.products] })),
+    on(findAll, (state, { products }) => ({ ...state, products })),
 )
