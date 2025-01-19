@@ -17,17 +17,12 @@ export const itemsReducer = createReducer(
     initialState,
     on(addItem, (state, { product }) => {
         const hasItem = state.items.find((item) => item.product.id === product.id);
-        if (hasItem) {
-            return {
-                items: state.items.map((item) =>
-                    item.product.id === product.id ? { ...item, quantity: item.quantity + 1 } : item),
-                total: calculateTotal(state.items)
-            }
-        } else {
-            return {
-                items: [...state.items, { product: { ...product }, quantity: 1 }],
-                total: calculateTotal(state.items)
-            }
+        const updatedItems = hasItem ? state.items.map((item) => item.product.id === product.id
+            ? { ...item, quantity: item.quantity + 1 } : item)
+            : [...state.items, { product: { ...product }, quantity: 1 }]
+        return {
+            items: updatedItems,
+            total: calculateTotal(updatedItems)
         }
     }),
     on(removeItem, (state, { id }) => {
