@@ -10,14 +10,13 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 })
 export class UserFormComponent {
 
-  private readonly initialId: number = 7;
-  private counterId: number = this.initialId;
   private formBuilder = inject(FormBuilder);
 
   @Output() newUserEventEmitter = new EventEmitter();
   user = input.required<User | null>();
 
   userForm = this.formBuilder.group({
+    id: [0],
     name: ['', [Validators.required]],
     lastName: ['', [Validators.required]],
     email: ['', [Validators.required, Validators.email]],
@@ -27,8 +26,7 @@ export class UserFormComponent {
  
   onSubmit() {
     if(this.userForm.valid) {
-      this.newUserEventEmitter.emit({ id: this.counterId, ...this.userForm.value });
-      this.counterId++;
+      this.newUserEventEmitter.emit({...this.userForm.value });
     }
     this.userForm.reset();
   }

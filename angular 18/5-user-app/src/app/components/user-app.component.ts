@@ -12,6 +12,8 @@ import { UserFormComponent } from './user-form/user-form.component';
 })
 export class UserAppComponent implements OnInit {
 
+  private counterId: number = 7;
+
   title: string = 'User List!!!';
   public users = signal<User[]>([]);
   public userSelected = signal<User | null>(null);
@@ -24,7 +26,12 @@ export class UserAppComponent implements OnInit {
   }
 
   addUser(user: User) {
-    this.users.update((users) => [...users, user]);
+    if(user.id > 0) {
+      this.users.update(users => users.map(u => u.id === user.id ? {...user} : u ));
+    } else {
+      this.users.update((users) => [...users, { ...user, id: this.counterId++ }]);
+    }
+    this.userSelected.set(null);
   }
 
   deleteUser(id: number): void {
