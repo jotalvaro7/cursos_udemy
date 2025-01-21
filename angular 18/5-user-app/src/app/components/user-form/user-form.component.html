@@ -1,31 +1,56 @@
 <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
-  <input class="form-control my-2" placeholder="name" formControlName="name" />
-  <input
-    class="form-control my-2"
-    placeholder="lastName"
-    formControlName="lastName"
-  />
-  <input
-    class="form-control my-2"
-    placeholder="email"
-    formControlName="email"
-  />
-  <input
-    class="form-control my-2"
-    placeholder="username"
-    formControlName="username"
-  />
-  <input
-    class="form-control my-2"
-    type="password"
-    placeholder="password"
-    formControlName="password"
-  />
-  <button
-    class="btn btn-primary my-2"
-    [disabled]="userForm.invalid"
-    type="submit"
-  >
-    Add User
-  </button>
+
+  <div class="form-group">
+    <input class="form-control my-2" placeholder="name" formControlName="name" />
+
+    @if (userForm.get('name')?.hasError('required') && (userForm.get('name')?.touched || userForm.get('name')?.dirty)) {
+      <div class="text-danger small">Name is required!!</div>
+    }
+  </div>
+
+  <div class="form-group">
+    <input class="form-control my-2" placeholder="lastName" formControlName="lastName" />
+
+    @if (userForm.get('lastName')?.hasError('required') && (userForm.get('lastName')?.touched || userForm.get('lastName')?.dirty)) {
+      <div class="text-danger small">Last Name is required!!</div>
+    }
+  </div>
+
+  <div class="form-group">
+    <input class="form-control my-2" placeholder="email" formControlName="email"/>
+    @if (userForm.get('email')?.hasError('required') && (userForm.get('email')?.touched || userForm.get('email')?.dirty)) {
+      <div class="text-danger small">Email is required!!</div>
+    }
+
+    @if (userForm.get('email')?.hasError('email')) {
+      <div class="text-danger small">Email is not valid!!</div>
+    }
+  </div>
+
+  <div class="form-group">
+    <input class="form-control my-2" placeholder="username" formControlName="username" />
+
+    @if (userForm.get('username')?.hasError('required') && (userForm.get('username')?.touched || userForm.get('username')?.dirty)) {
+      <div class="text-danger small">Username is required!!</div>
+    }
+
+    @if(userForm.get('username')?.hasError('minlength')) {
+      <div class="text-danger small">Username must be at least 8 characters long!!</div>
+    }
+  </div>
+
+  <div class="form-group">
+    <input class="form-control my-2" type="password" placeholder="password" formControlName="password" />
+  
+    @if (userForm.get('password')?.hasError('required') && (userForm.get('password')?.touched || userForm.get('password')?.dirty)) {
+      <div class="text-danger small">Password is required!!</div>
+    }
+
+    @if(userForm.get('password')?.hasError('minlength')) {
+      <div class="text-danger small">Password must be at least 6 characters long!!</div>
+    }
+  </div>
+
+  <button class="btn btn-primary my-2" [disabled]="userForm.invalid" type="submit"> Add User </button>
+
 </form>

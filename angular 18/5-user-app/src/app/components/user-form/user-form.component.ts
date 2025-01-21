@@ -19,14 +19,16 @@ export class UserFormComponent {
   userForm = this.formBuilder.group({
     name: ['', [Validators.required]],
     lastName: ['', [Validators.required]],
-    email: ['', [Validators.required]],
-    username: ['', [Validators.required]],
-    password: ['', [Validators.required]]
+    email: ['', [Validators.required, Validators.email]],
+    username: ['', [Validators.required, Validators.minLength(8)]],
+    password: ['', [Validators.required, Validators.minLength(6)]]
   });
 
   onSubmit() {
-    this.newUserEventEmitter.emit({ id: this.counterId, ...this.userForm.value });
-    this.counterId++;
+    if(this.userForm.valid) {
+      this.newUserEventEmitter.emit({ id: this.counterId, ...this.userForm.value });
+      this.counterId++;
+    }
     this.userForm.reset();
   }
 
