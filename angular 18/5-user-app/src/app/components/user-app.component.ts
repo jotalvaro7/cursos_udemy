@@ -14,6 +14,7 @@ export class UserAppComponent implements OnInit {
 
   title: string = 'User List!!!';
   public users = signal<User[]>([]);
+  public userSelected = signal<User | null>(null);
   private userService = inject(UserService);
 
   ngOnInit(): void {
@@ -30,8 +31,7 @@ export class UserAppComponent implements OnInit {
     this.users.update(users => users.filter(user => user.id !== id));
   }
 
-  logEffect = effect(() => {
-    console.log(this.users());
-  })
-
+  selectedUser(userRow: User): void {
+    this.userSelected.set(userRow);
+  }
 }

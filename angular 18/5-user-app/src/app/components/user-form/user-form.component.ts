@@ -1,5 +1,5 @@
 import { User } from './../../models/user';
-import { Component, EventEmitter, inject, Output } from '@angular/core';
+import { Component, EventEmitter, inject, input, Output, SimpleChanges, OnChanges, effect } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 
 @Component({
@@ -15,6 +15,7 @@ export class UserFormComponent {
   private formBuilder = inject(FormBuilder);
 
   @Output() newUserEventEmitter = new EventEmitter();
+  user = input.required<User | null>();
 
   userForm = this.formBuilder.group({
     name: ['', [Validators.required]],
@@ -23,7 +24,7 @@ export class UserFormComponent {
     username: ['', [Validators.required, Validators.minLength(8)]],
     password: ['', [Validators.required, Validators.minLength(6)]]
   });
-
+ 
   onSubmit() {
     if(this.userForm.valid) {
       this.newUserEventEmitter.emit({ id: this.counterId, ...this.userForm.value });
@@ -31,5 +32,12 @@ export class UserFormComponent {
     }
     this.userForm.reset();
   }
+  
+  userEffect = effect(() => {
+    const currentUser = this.user();
+    if(currentUser) {
+      this.userForm.patchValue(currentUser);
+    }
+  });
 
 }

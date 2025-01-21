@@ -12,6 +12,7 @@ export class UserComponent {
   users = input.required<User[]>();
   //@Output() deleteUserEventEmitter = new EventEmitter<number>();
   deleteUserEventEmitter = output<number>();
+  selectedUserEventEmitter = output<User>();
 
   onDeleteUser(id: number): void {
 
@@ -19,6 +20,10 @@ export class UserComponent {
     if (confirmRemove) {
       this.deleteUserEventEmitter.emit(id);
     }
+  }
+
+  onSelectedUser(user: User): void {
+    this.selectedUserEventEmitter.emit(user);
   }
 
 }
