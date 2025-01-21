@@ -26,6 +26,10 @@ export class UserAppComponent implements OnInit {
     this.users.update((users) => [...users, user]);
   }
 
+  deleteUser(id: number): void {
+    this.users.update(users => users.filter(user => user.id !== id));
+  }
+
   logEffect = effect(() => {
     console.log(this.users());
   })

@@ -4,8 +4,8 @@
     <div class="col">
       <user-form (newUserEventEmitter)="addUser($event)" />
     </div>
-    <div class="col">
-      <user [users]="users()" />
+    <div class="col-7">
+      <user [users]="users()" (deleteUserEventEmitter)="deleteUser($event)" />
     </div>
   </div>
 </div>
