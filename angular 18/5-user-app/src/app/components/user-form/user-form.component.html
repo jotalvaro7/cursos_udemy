@@ -1,0 +1,31 @@
+<form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+  <input class="form-control my-2" placeholder="name" formControlName="name" />
+  <input
+    class="form-control my-2"
+    placeholder="lastName"
+    formControlName="lastName"
+  />
+  <input
+    class="form-control my-2"
+    placeholder="email"
+    formControlName="email"
+  />
+  <input
+    class="form-control my-2"
+    placeholder="username"
+    formControlName="username"
+  />
+  <input
+    class="form-control my-2"
+    type="password"
+    placeholder="password"
+    formControlName="password"
+  />
+  <button
+    class="btn btn-primary my-2"
+    [disabled]="userForm.invalid"
+    type="submit"
+  >
+    Add User
+  </button>
+</form>
