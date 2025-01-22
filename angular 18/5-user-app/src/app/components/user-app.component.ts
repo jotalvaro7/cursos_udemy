@@ -35,18 +35,42 @@ export class UserAppComponent implements OnInit {
     } else {
       this.users.update((users) => [...users, { ...user, id: this.counterId++ }]);
     }
-    this.sweetAlertService.show("Saved!", "User saved successfully!", "success", false, Colors.primary, Colors.secondary, "Ok");
+    this.sweetAlertService.show(
+      "Saved!", 
+      "User saved successfully!", 
+      "success", 
+      false, 
+      Colors.primary, 
+      Colors.secondary, 
+      "Ok"
+    );
     this.userSelected.set(null);
   }
 
-  deleteUser(id: number) {
-    this.sweetAlertService.show("Are you sure you want to delete this user?", "The user will be deleted of system!", "warning", true, Colors.primary, Colors.secondary, "Yes!")
-      .then((result) => {
-        if (result.isConfirmed) {
-          this.users.update(users => users.filter(user => user.id !== id));
-          this.sweetAlertService.show("Deleted!", `User with id: ${id} deleted successfully!`, "success", false, Colors.primary, Colors.secondary, "Ok");
-        }
-      });
+  async deleteUser(id: number) {
+    const result = await this.sweetAlertService.show(
+      "Are you sure you want to delete this user?",
+      "The user will be deleted of system!",
+      "warning",
+      true,
+      Colors.primary,
+      Colors.secondary,
+      "Yes!"
+    );
+
+    if (result.isConfirmed) {
+      this.users.update(users => users.filter(user => user.id !== id));
+      this.sweetAlertService.show(
+        "Deleted!", 
+        `User with id: ${id} deleted successfully!`, 
+        "success", 
+        false, 
+        Colors.primary,
+        Colors.secondary, 
+        "Ok"
+      );
+    }
+
   }
 
   selectedUser(userRow: User): void {
