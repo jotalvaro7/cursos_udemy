@@ -1,8 +1,11 @@
-import { Component, computed, effect, inject, input, OnInit, output, signal } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { User } from '../models/user';
 import { UserService } from '../services/user.service';
 import { UserComponent } from "./user/user.component";
 import { UserFormComponent } from './user-form/user-form.component';
+import { SweetAlertService } from '../services/sweet-alert.service';
+import { Colors } from '../constants/colors';
+
 
 @Component({
   selector: 'user-app',
@@ -18,6 +21,7 @@ export class UserAppComponent implements OnInit {
   public users = signal<User[]>([]);
   public userSelected = signal<User | null>(null);
   private userService = inject(UserService);
+  private sweetAlertService = inject(SweetAlertService);
 
   ngOnInit(): void {
     this.userService.findAll().subscribe((users) => {
@@ -26,19 +30,28 @@ export class UserAppComponent implements OnInit {
   }
 
   addUser(user: User) {
-    if(user.id > 0) {
-      this.users.update(users => users.map(u => u.id === user.id ? {...user} : u ));
+    if (user.id > 0) {
+      this.users.update(users => users.map(u => u.id === user.id ? { ...user } : u));
     } else {
       this.users.update((users) => [...users, { ...user, id: this.counterId++ }]);
     }
+    this.sweetAlertService.show("Saved!", "User saved successfully!", "success", false, Colors.primary, Colors.secondary, "Ok");
     this.userSelected.set(null);
   }
 
-  deleteUser(id: number): void {
-    this.users.update(users => users.filter(user => user.id !== id));
+  deleteUser(id: number) {
+    this.sweetAlertService.show("Are you sure you want to delete this user?", "The user will be deleted of system!", "warning", true, Colors.primary, Colors.secondary, "Yes!")
+      .then((result) => {
+        if (result.isConfirmed) {
+          this.users.update(users => users.filter(user => user.id !== id));
+          this.sweetAlertService.show("Deleted!", `User with id: ${id} deleted successfully!`, "success", false, Colors.primary, Colors.secondary, "Ok");
+        }
+      });
   }
 
   selectedUser(userRow: User): void {
     this.userSelected.set(userRow);
   }
+
+
 }
