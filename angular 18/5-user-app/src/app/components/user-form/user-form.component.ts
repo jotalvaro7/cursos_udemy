@@ -1,5 +1,5 @@
 import { User } from './../../models/user';
-import { Component, EventEmitter, inject, input, Output, SimpleChanges, OnChanges, effect } from '@angular/core';
+import { Component, EventEmitter, inject, input, Output, SimpleChanges, OnChanges, effect, output } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 
 @Component({
@@ -14,6 +14,7 @@ export class UserFormComponent {
 
   @Output() newUserEventEmitter = new EventEmitter();
   user = input.required<User | null>();
+  modalEventEmitter = output<void>();
 
   userForm = this.formBuilder.group({
     id: [0],
@@ -37,5 +38,9 @@ export class UserFormComponent {
       this.userForm.patchValue(currentUser);
     }
   });
+
+  triggerModal() {
+    this.modalEventEmitter.emit();
+  }
 
 }

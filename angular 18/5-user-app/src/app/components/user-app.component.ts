@@ -18,6 +18,7 @@ export class UserAppComponent implements OnInit {
   private counterId: number = 7;
 
   title: string = 'User List!!!';
+  showModal= signal<boolean>(false);
   public users = signal<User[]>([]);
   public userSelected = signal<User | null>(null);
   private userService = inject(UserService);
@@ -44,6 +45,7 @@ export class UserAppComponent implements OnInit {
       Colors.secondary, 
       "Ok"
     );
+    this.showModal.set(false);
     this.userSelected.set(null);
   }
 
@@ -75,6 +77,12 @@ export class UserAppComponent implements OnInit {
 
   selectedUser(userRow: User): void {
     this.userSelected.set(userRow);
+    this.showModal.set(true);
+  }
+
+  triggerModal(): void {
+    this.showModal.set(!this.showModal());
+    this.userSelected.set(null);
   }
 
 
