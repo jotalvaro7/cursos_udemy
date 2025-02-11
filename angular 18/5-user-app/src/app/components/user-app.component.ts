@@ -58,6 +58,7 @@ export class UserAppComponent implements OnInit, OnDestroy {
   private initializeSubscriptions(): void {
     this.subscribeToNewUsers();
     this.subscribeToDeleteUsers();
+    this.subscribeToFindById();
   }
 
   private subscribeToNewUsers(): void {
@@ -72,6 +73,19 @@ export class UserAppComponent implements OnInit, OnDestroy {
       .subscribe(async id => this.handleUserDeletion(id));
   }
 
+  private subscribeToFindById(): void {
+    this.sharingDataService.findById$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: id => {
+          this.handleUserFindById(id);
+        },
+        error: (error) => {
+          console.error('Error finding user by id', error);
+        }
+      });
+  }
+  
   private handleUserAddition(user: User): void {
     this.updateUsers(user);
     this.navigateToUsers();
@@ -87,6 +101,16 @@ export class UserAppComponent implements OnInit, OnDestroy {
       this.deleteUser(id);
       this.refreshUsersView();
       this.showDeleteSuccessMessage(id);
+    }
+  }
+
+  private handleUserFindById(id: number): void {
+    const user = this.users().find(user => user.id === id);
+    if(user){
+      this.sharingDataService.userSelected(user);
+    } else {
+      console.info(`User with id: ${id}, not found`);
+      this.router.navigate([ROUTES.users]);
     }
   }
   
